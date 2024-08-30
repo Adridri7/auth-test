@@ -10,7 +10,7 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch('https://auth-test-lac-gamma.vercel.app//api/login', {
+    const res = await fetch('/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -23,7 +23,7 @@ const Login = () => {
     if (res.ok) {
       // Sauvegarde du token et redirection
       localStorage.setItem('token', data.token);
-      window.location.href = 'https://auth-test-lac-gamma.vercel.app//profile'; // Remplacement de router.push par window.location.href
+      window.location.href = '/profile'; // Remplacement de router.push par window.location.href
     } else {
       setError(data.message || 'Login failed');
     }

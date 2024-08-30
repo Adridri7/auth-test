@@ -11,14 +11,14 @@ const Profile = () => {
 
     if (!token) {
       // Redirection vers la page de connexion
-      window.location.href = 'https://auth-test-lac-gamma.vercel.app//login';
+      window.location.href = '/login';
       return;
     }
 
     // Fonction asynchrone pour vérifier le token
     const verifyToken = async () => {
       try {
-        const res = await fetch('https://auth-test-lac-gamma.vercel.app//api/verify-token', {
+        const res = await fetch('/api/verify-token', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -31,19 +31,19 @@ const Profile = () => {
         if (res.ok) {
           if (data.error) {
             localStorage.removeItem('token');
-            window.location.href = 'https://auth-test-lac-gamma.vercel.app//login';
+            window.location.href = '/login';
           } else {
             setUser(data.user);
           }
         } else {
           // Gérer les erreurs de réponse non ok
           localStorage.removeItem('token');
-          window.location.href = 'https://auth-test-lac-gamma.vercel.app//login';
+          window.location.href = '/login';
         }
       } catch (error) {
         console.error('Error verifying token:', error);
         localStorage.removeItem('token');
-        window.location.href = 'https://auth-test-lac-gamma.vercel.app//login';
+        window.location.href = '/login';
       } finally {
         setLoading(false);
       }
