@@ -1,25 +1,39 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { signToken } from '../../../utils/jwt';
+import { signToken, verifyToken } from '../../../utils/jwt';
 
-const users: { email: string; password: string }[] = []; // Pour simplifier, nous utilisons un tableau en mémoire. Remplacez-le par une base de données dans un vrai projet.
+const users: { email: string; password: string }[] = []; // Utilisez une base de données dans un vrai projet.
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'POST') {
-    const { email, password } = req.body;
+export async function POST(req: NextRequest) {
+  try {
+    // Vérification du token (si nécessaire pour l'enregistrement)
+    const authHeader = req.headers.get('Authorization');
+    const token = authHeader?.split(' ')[1];
 
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+    if (token) {
+      const decoded = verifyToken(token);
+      if (!decoded) {
+        return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      }
     }
 
+    // Récupération des données de la requête
+    const { email, password } = await req.json();
+
+    if (!email || !password) {
+      return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
+    }
+
+    // Hachage du mot de passe et enregistrement de l'utilisateur
     const hashedPassword = await bcrypt.hash(password, 10);
     users.push({ email, password: hashedPassword });
 
-    const token = signToken({ email });
+    // Génération du token pour l'utilisateur nouvellement enregistré
+    const newToken = signToken({ email });
 
-    res.status(200).json({ token });
-  } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    return NextResponse.json({ token: newToken }, { status: 200 });
+  } catch (error) {
+    console.error('Error during registration:', error);
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
