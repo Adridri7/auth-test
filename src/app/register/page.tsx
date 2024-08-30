@@ -10,7 +10,7 @@ const Register = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const res = await fetch('/api/register', {
+    const res = await fetch('https://auth-test-lac-gamma.vercel.app//api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -23,7 +23,7 @@ const Register = () => {
     if (res.ok) {
       // Sauvegarde du token et redirection
       localStorage.setItem('token', data.token);
-      window.location.href  = '/profile';
+      window.location.href  = 'https://auth-test-lac-gamma.vercel.app//profile';
     } else {
       setError(data.message || 'Registration failed');
     }
