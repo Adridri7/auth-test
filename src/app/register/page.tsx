@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router';
+
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +22,7 @@ const Register = () => {
     if (res.ok) {
       // Sauvegarde du token et redirection
       localStorage.setItem('token', data.token);
-      router.push('/profile');
+      window.location.href  = '/profile';
     } else {
       setError(data.message || 'Registration failed');
     }
